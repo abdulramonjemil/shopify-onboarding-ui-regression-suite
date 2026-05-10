@@ -84,6 +84,14 @@ test.use({
 UI STRUCTURE TESTS
 \*--------------------------------------------*/
 
+/**
+ * `defaultBrowserType` must be removed because including it causing Playwright
+ * to throw an error when supplied in the describe() group:
+ *
+ * > Cannot use({ defaultBrowserType }) in a describe group, because it forces a
+ * > new worker. Make it top-level in the test file or put in the configuration
+ * > file.
+ */
 const { defaultBrowserType: _, ...desktopVPConfig } = devices["Desktop Chrome"]
 const { defaultBrowserType: __, ...mobileVPConfig } = devices["Pixel 5"]
 
