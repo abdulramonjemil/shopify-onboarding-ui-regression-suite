@@ -1,0 +1,3 @@
+[submodule "baseline/app-ui-design"]
+	path = baseline/app-ui-design
+	url = https://github.com/abdulramonjemil/shopify-onboarding.git
