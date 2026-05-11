@@ -16,7 +16,6 @@ configure({
  */
 export default defineConfig({
   testDir: "./tests",
-  testMatch: isGenerationMode ? "**/ui-design.spec.ts" : undefined,
   /* Update snapshots in generation mode, never in test mode */
   updateSnapshots: isGenerationMode ? "all" : "none",
   /* Screenshot directory for all modes */
@@ -38,6 +37,9 @@ export default defineConfig({
   use: {
     /* Base URL configured based on mode */
     baseURL: targetAppUrl,
+
+    /* Headless mode on CI, headed mode locally */
+    headless: !!process.env.CI,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry"

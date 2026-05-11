@@ -1,73 +1,8 @@
 import { test, expect, devices } from "@playwright/test"
 import { runSteps } from "passmark"
+import { screenshotFilename, screenshots } from "../src/baseline"
 import { targetAppUrl } from "../src/env"
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-/*--------------------------------------------*\
-CONSTANTS AND HELPERS
-\*--------------------------------------------*/
-
-/**
- * Screenshot filenames for UI design regression testing.
- */
-const screenshots = {
-  structure: {
-    homepage: "s-01-homepage",
-    popover: "s-02-popover",
-    dropdown: "s-03-dropdown",
-    dismissedTrialOffer: "s-04-dismissed-trial-offer",
-    progress20Percent: "s-05-progress-20-percent",
-    progress100Percent: "s-06-progress-100-percent",
-    accordionItem1: "s-07-accordion-item-1",
-    accordionItem2: "s-08-accordion-item-2",
-    accordionItem3: "s-09-accordion-item-3",
-    accordionItem4: "s-10-accordion-item-4",
-    accordionItem5: "s-11-accordion-item-5",
-    collapsedMainSection: "s-12-collapsed-main-section"
-  }
-} as const
-
-type StructureScreenshotValue =
-  (typeof screenshots.structure)[keyof typeof screenshots.structure]
-
-function screenshotFilename({
-  screenshot,
-  screen
-}: {
-  screenshot: StructureScreenshotValue
-  screen: "desktop" | "mobile"
-}) {
-  return `${screenshot}--${screen}.png`
-}
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-/*--------------------------------------------*\
-TEST CONFIG
-\*--------------------------------------------*/
-
-test.use({
-  headless: !!process.env.CI
-})
+import { getUsableDeviceDescriptor } from "../lib/playwright"
 
 /**
  *
@@ -84,57 +19,47 @@ test.use({
 UI STRUCTURE TESTS
 \*--------------------------------------------*/
 
-/**
- * `defaultBrowserType` must be removed because including it causing Playwright
- * to throw an error when supplied in the describe() group:
- *
- * > Cannot use({ defaultBrowserType }) in a describe group, because it forces a
- * > new worker. Make it top-level in the test file or put in the configuration
- * > file.
- */
-const { defaultBrowserType: _, ...desktopVPConfig } = devices["Desktop Chrome"]
-const { defaultBrowserType: __, ...mobileVPConfig } = devices["Pixel 5"]
-
-const viewports = [
+const windows = [
   {
-    name: "Desktop",
+    title: "Desktop",
     screen: "desktop",
     fixtures: {
-      ...desktopVPConfig,
+      ...getUsableDeviceDescriptor(devices["Desktop Chrome"]),
       viewport: { width: 1280, height: 720 }
     }
   },
   {
-    name: "Mobile",
+    title: "Mobile",
     screen: "mobile",
     fixtures: {
-      ...mobileVPConfig, // For Android Chrome
+      ...getUsableDeviceDescriptor(devices["Pixel 5"]),
       viewport: { width: 375, height: 667 }
     }
   }
 ] as const
 
-for (const vp of viewports) {
-  test.describe(`${vp.name} Viewport`, () => {
-    test.use(vp.fixtures)
+for (const win of windows) {
+  test.describe(`${win.title} Viewport`, () => {
+    test.use(win.fixtures)
 
     test.beforeEach(async ({}, testInfo) => {
       testInfo.setTimeout(5 * 60_000) // 5 minutes for AI model response
     })
 
-    test(`${vp.name} UI Structure`, async ({ page }) => {
+    test(`${win.title} UI Structure`, async ({ page }) => {
       /**
        * Step 1: Default homepage state
        */
       await runSteps({
         page,
-        userFlow: "Homepage",
+        userFlow: "Navigate to homepage",
         steps: [{ description: `Navigate to ${targetAppUrl}` }]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.homepage,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -143,13 +68,14 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Popover",
+        userFlow: "Open notifications",
         steps: [{ description: "Click notification button" }]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.popover,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -158,16 +84,17 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Dropdown",
+        userFlow: "Open dropdown menu",
         steps: [
           { description: "Click notification button to close popover" },
-          { description: "Click dropdown menu button" }
+          { description: "Click dropdown menu button for store options" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.dropdown,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -176,17 +103,18 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Dismissed Trial Offer",
+        userFlow: "Dismiss trial offer",
         steps: [
           { description: "Click dropdown menu button to close dropdown" },
           { description: "Dismiss trial offer" },
           { description: "Click on body to stabilize focus" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.dismissedTrialOffer,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -195,13 +123,14 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Progress 20%",
+        userFlow: "Reach 20 percent progress",
         steps: [{ description: "Check first checkbox" }]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.progress20Percent,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -210,7 +139,7 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Check remaining checkboxes",
+        userFlow: "Reach 100 percent progress",
         steps: [
           { description: "Check second checkbox" },
           { description: "Check third checkbox" },
@@ -218,10 +147,11 @@ for (const vp of viewports) {
           { description: "Check fifth checkbox" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.progress100Percent,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -230,15 +160,16 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Accordion Item 1",
+        userFlow: "Open accordion item 1",
         steps: [
           { description: "Click Customize your online store button to expand" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.accordionItem1,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -247,15 +178,16 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Accordion Item 2",
+        userFlow: "Open accordion item 2",
         steps: [
           { description: "Click Add your first product button to expand" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.accordionItem2,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -264,13 +196,14 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Accordion Item 3",
+        userFlow: "Open accordion item 3",
         steps: [{ description: "Click Add a custom domain button to expand" }]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.accordionItem3,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -279,13 +212,14 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Accordion Item 4",
+        userFlow: "Open accordion item 4",
         steps: [{ description: "Click Name your store button to expand" }]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.accordionItem4,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -294,15 +228,16 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Accordion Item 5",
+        userFlow: "Open accordion item 5",
         steps: [
           { description: "Click Set up a payment provider button to expand" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page.getByRole("main")).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.accordionItem5,
-          screen: vp.screen
+          screen: win.screen
         })
       )
 
@@ -311,16 +246,17 @@ for (const vp of viewports) {
        */
       await runSteps({
         page,
-        userFlow: "Collapsed Main Section",
+        userFlow: "Collapse setup guide",
         steps: [
           { description: "Click button to collapse setup guide" },
           { description: "Click on body to stabilize focus" }
         ]
       })
+      await page.mouse.move(-1, -1) // Move cursor off-screen
       await expect(page).toHaveScreenshot(
         screenshotFilename({
           screenshot: screenshots.structure.collapsedMainSection,
-          screen: vp.screen
+          screen: win.screen
         })
       )
     })
