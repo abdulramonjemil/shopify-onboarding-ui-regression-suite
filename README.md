@@ -64,6 +64,13 @@ git submodule update --init --recursive
 └── README.md                      # You are here
 ```
 
+## 📚 Original Project
+
+This regression test suite tests the **Shopify Onboarding UI** project:
+
+- **Repository**: [shopify-onboarding](https://github.com/abdulramonjemil/shopify-onboarding)
+- **Figma Design**: [Level-Up Front Hackathon Design](https://www.figma.com/design/soq7IgK2xZle8Ed5XPdo6v/Level-Up-Front-Hackathon--Copy-?m=auto&t=fG3g9rsXtX689kyG-1)
+
 ## 🧪 Test Suites
 
 ### UI Structure Tests (`ui-structure.spec.ts`)

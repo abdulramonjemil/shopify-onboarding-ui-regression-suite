@@ -1,7 +1,7 @@
 {
-  "name": "passmark-project-sample",
+  "name": "shopify-onboarding-ui-regressionn-suite",
   "version": "1.0.0",
-  "description": "",
+  "description": "A screenshot-based regression test suite for Shopify onboarding UI using Playwright and Passmark AI-powered step execution.",
   "main": "index.js",
   "scripts": {
     "playwright:test": "cross-env GENERATE_BASELINE_SCREENSHOTS_ONLY=false npx playwright test",
