@@ -1,7 +1,9 @@
 # Shopify Onboarding UI Regression Suite
 
-A comprehensive regression test suite for a Figma-designed Shopify onboarding
-UI, built with **Playwright** and **Passmark** AI-powered step execution.
+A comprehensive regression test suite built with **Playwright** and **Passmark**
+AI-powered step execution for my
+[Shopify Onboarding UI](https://github.com/abdulramonjemil/shopify-onboarding)
+project, a frontend project based on a Figma design.
 
 ## 🎯 What This Does
 
@@ -12,15 +14,16 @@ a design system by:
 2. **Testing Interaction States** (hover, active, focus-visible) using Chrome
    DevTools Protocol
 
-Instead of writing brittle selectors and waiting for elements, you describe what
-you want to happen in plain English, and Passmark figures out how to do it.
+Instead of writing brittle selectors and waiting for elements, we simply
+describe what we want to happen in plain English, and Passmark figures out how
+to do it.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js
-- A Shopify app running at the configured URL
+- An implementation of the Shopify Onboarding UI running at the configured URL
 
 ### Setup
 
@@ -63,13 +66,6 @@ git submodule update --init --recursive
 ├── playwright.config.ts           # Playwright & Passmark config
 └── README.md                      # You are here
 ```
-
-## 📚 Original Project
-
-This regression test suite tests the **Shopify Onboarding UI** project:
-
-- **Repository**: [shopify-onboarding](https://github.com/abdulramonjemil/shopify-onboarding)
-- **Figma Design**: [Level-Up Front Hackathon Design](https://www.figma.com/design/soq7IgK2xZle8Ed5XPdo6v/Level-Up-Front-Hackathon--Copy-?m=auto&t=fG3g9rsXtX689kyG-1)
 
 ## 🧪 Test Suites
 
